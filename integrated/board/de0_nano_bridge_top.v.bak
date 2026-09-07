@@ -79,8 +79,7 @@ module de0_nano_bridge_top (
     wire [15:0] selected_address = selected_remote ?
                                    remote_address : local_address;
 
-    //localparam [7:0] BOARD_TEST_PATTERN = 8'b11111111;
-	 localparam [7:0] BOARD_TEST_PATTERN = 8'b11100111;
+    localparam [7:0] BOARD_TEST_PATTERN = 8'hA5;
 
     reg master1_start;
     wire master1_ready;
@@ -95,17 +94,6 @@ module de0_nano_bridge_top (
     wire slave3_ready;
     wire slave4_ready;
     wire slave3_split;
-	 
-	 reg [7:0] selected_test_pattern;
-
-	always @(*) begin
-		 case (selected_slave)
-			  2'b00: selected_test_pattern = 8'hA5;
-			  2'b01: selected_test_pattern = 8'h3C;
-			  2'b10: selected_test_pattern = 8'h5A;
-			  default: selected_test_pattern = 8'h00;
-		 endcase
-	end
 
     always @(*) begin
         master1_start = 1'b0;
@@ -154,7 +142,7 @@ module de0_nano_bridge_top (
                         if (target_invalid)
                             led_result <= 8'hEE;
                         else if (selected_write)
-                            led_result <= selected_test_pattern;
+                            led_result <= BOARD_TEST_PATTERN;
                         else
                             led_result <= master1_read_data;
 
@@ -175,7 +163,7 @@ module de0_nano_bridge_top (
     ) system_inst (
         .clk(CLOCK_50),
         .reset_n(reset_n),
-        .master1_write_data(selected_test_pattern),
+        .master1_write_data(BOARD_TEST_PATTERN),
         .master1_read_data(master1_read_data),
         .master1_address(selected_address),
         .master1_start(master1_start),
